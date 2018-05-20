@@ -44,16 +44,13 @@ public class FloodInThejungle {
 			int noOftree) throws Exception {
 		Set<Integer> treepositionfromWhereMonkeyCannotJump = new HashSet<Integer>();
 		Set<Integer> treeposition = new HashSet<Integer>();
-		Set<Integer> cannotJumpSet = new HashSet<Integer>();
+		Set<String> cannotJumpByMonkeySet = new HashSet<String>();
 		Set<Integer> canJumpSet = new HashSet<Integer>();
-		// Set<Integer> cannotJumpByMonkeySet = new HashSet<Integer>();
-		// Set<Integer> canJumpByMonkeySet = new HashSet<Integer>();
+		Set<String> cannotJumpByEDSet = new HashSet<String>();
 		int duptree = 0;
 		int noMeeting = 0;
 		for (String p : input) {
 			String[] pStr = p.split(" ");
-			int cannotJumpByED = 0;
-			int cannotJumpByMonkey = 0;
 			int canJump = 0;
 
 			for (String c : input) {
@@ -72,9 +69,11 @@ public class FloodInThejungle {
 						&& Integer.parseInt(cStr[3]) >= 1
 						&& Integer.parseInt(cStr[3]) <= 200) {
 
-					if (euclideanDistance(pStr[0], pStr[1], cStr[0], cStr[1]) > capacity) {
-						cannotJumpByED++;
-						cannotJumpSet.add(cannotJumpByED);
+					if (euclideanDistance(pStr[0], pStr[1], cStr[0], cStr[1]) > capacity
+							&& Integer.parseInt(pStr[2]) != 0
+							&& Integer.parseInt(pStr[3]) != 0) {
+						cannotJumpByEDSet.add(p);
+						cannotJumpByEDSet.add(c);
 					} else if (Integer.parseInt(cStr[2]) > Integer
 							.parseInt(cStr[3])) {
 						if (Integer.parseInt(pStr[2]) <= Integer
@@ -82,9 +81,9 @@ public class FloodInThejungle {
 							treepositionfromWhereMonkeyCannotJump.add(input
 									.indexOf(c));
 							canJumpSet.add(canJump);
-						} else {
-							cannotJumpByMonkey++;
-							cannotJumpSet.add(cannotJumpByMonkey);
+						} else if (Integer.parseInt(pStr[2]) > Integer
+								.parseInt(pStr[3])) {
+							cannotJumpByMonkeySet.add(p);
 						}
 
 					} else if (Integer.parseInt(pStr[2]) <= Integer
@@ -104,16 +103,18 @@ public class FloodInThejungle {
 						}
 
 					}
-				} else {
-					noMeeting++;
-				}
+				}/*
+				 * else { noMeeting++; }
+				 */
+
 			}
 		}
 
-		if (cannotJumpSet.size() >= 2 || duptree > noOftree
-				|| cannotJumpSet.isEmpty() && canJumpSet.isEmpty()
+		if (cannotJumpByMonkeySet.size() >= 2 || duptree > noOftree
+				|| cannotJumpByMonkeySet.isEmpty() && canJumpSet.isEmpty()
 				|| noMeeting > 2 * noOftree
-				|| treepositionfromWhereMonkeyCannotJump.size() > 1) {
+				|| treepositionfromWhereMonkeyCannotJump.size() > 1
+				|| cannotJumpByEDSet.size() > 2) {
 			System.out.println(-1);
 		} else if (treepositionfromWhereMonkeyCannotJump.size() == 1) {
 			for (Integer treeNo : treepositionfromWhereMonkeyCannotJump) {
@@ -134,7 +135,7 @@ public class FloodInThejungle {
 
 		double x = Math.pow((Double.parseDouble(x1) - Double.parseDouble(x2)),
 				2);
-		double y = Math.pow((Double.parseDouble(y2) - Double.parseDouble(y2)),
+		double y = Math.pow((Double.parseDouble(y1) - Double.parseDouble(y2)),
 				2);
 		double z = x + y;
 		return Math.sqrt(z);
